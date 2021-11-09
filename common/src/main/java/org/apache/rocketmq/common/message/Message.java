@@ -24,16 +24,24 @@ import java.util.Map;
 
 public class Message implements Serializable {
     private static final long serialVersionUID = 8445773977080406428L;
-
+    //主题
     private String topic;
+    //标记消息,rocketmq不做处理
     private int flag;
+    //扩展属性
     private Map<String, String> properties;
+    //消息体
     private byte[] body;
     private String transactionId;
 
     public Message() {
     }
 
+    /**
+     *  tags: 消息过滤
+     *  keys: 消息索引建,空格隔开,可以快速检索消息
+     *  waitStoreMsgOk: 消息发送时,是否等待消息存储完成后在返回
+     */
     public Message(String topic, byte[] body) {
         this(topic, "", "", 0, body, true);
     }

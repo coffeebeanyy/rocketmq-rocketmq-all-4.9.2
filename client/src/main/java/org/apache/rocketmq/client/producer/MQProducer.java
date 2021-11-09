@@ -31,8 +31,14 @@ public interface MQProducer extends MQAdmin {
 
     void shutdown();
 
+    /**
+     * 查找该主题下的所有的消息队列
+     */
     List<MessageQueue> fetchPublishMessageQueues(final String topic) throws MQClientException;
 
+    /**
+     * 发送消息
+     */
     SendResult send(final Message msg) throws MQClientException, RemotingException, MQBrokerException,
         InterruptedException;
 
@@ -44,10 +50,10 @@ public interface MQProducer extends MQAdmin {
 
     void send(final Message msg, final SendCallback sendCallback, final long timeout)
         throws MQClientException, RemotingException, InterruptedException;
-
+    //单项发送消息,发完即返回
     void sendOneway(final Message msg) throws MQClientException, RemotingException,
         InterruptedException;
-
+    //指定队列,发送消息
     SendResult send(final Message msg, final MessageQueue mq) throws MQClientException,
         RemotingException, MQBrokerException, InterruptedException;
 
@@ -87,7 +93,7 @@ public interface MQProducer extends MQAdmin {
     TransactionSendResult sendMessageInTransaction(final Message msg,
         final Object arg) throws MQClientException;
 
-    //for batch
+    //for batch 批量发现消息
     SendResult send(final Collection<Message> msgs) throws MQClientException, RemotingException, MQBrokerException,
         InterruptedException;
 

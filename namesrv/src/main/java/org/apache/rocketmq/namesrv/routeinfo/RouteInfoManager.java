@@ -51,7 +51,7 @@ import org.apache.rocketmq.remoting.common.RemotingUtil;
  */
 public class RouteInfoManager {
     private static final InternalLogger log = InternalLoggerFactory.getLogger(LoggerName.NAMESRV_LOGGER_NAME);
-    private final static long BROKER_CHANNEL_EXPIRED_TIME = 1000 * 60 * 2;
+    private final static long BROKER_CHANNEL_EXPIRED_TIME = 1000 * 60 * 2;//120秒
     private final ReadWriteLock lock = new ReentrantReadWriteLock();
     //k1 topic消息队列的路由信息,消息发送根据路由表进行负载均衡
     private final HashMap<String/* topic */, List<QueueData>> topicQueueTable;
@@ -61,7 +61,7 @@ public class RouteInfoManager {
     private final HashMap<String/* clusterName */, Set<String/* brokerName */>> clusterAddrTable;
     //broker状态信息,nameserver每次收到心跳包会更新该信息
     private final HashMap<String/* brokerAddr */, BrokerLiveInfo> brokerLiveTable;
-    //用于类模式消息过滤,4.4以及以后版本废弃1
+    //用于类模式消息过滤,4.4以及以后版本废弃
     private final HashMap<String/* brokerAddr */, List<String>/* Filter Server */> filterServerTable;
 
     public RouteInfoManager() {
@@ -466,6 +466,7 @@ public class RouteInfoManager {
         if (channel != null) {
             try {
                 try {
+                    //检测channel是否合法
                     this.lock.readLock().lockInterruptibly();
                     Iterator<Entry<String, BrokerLiveInfo>> itBrokerLiveTable =
                         this.brokerLiveTable.entrySet().iterator();
@@ -494,6 +495,7 @@ public class RouteInfoManager {
 
             try {
                 try {
+                    //1. 申请写锁
                     this.lock.writeLock().lockInterruptibly();
                     this.brokerLiveTable.remove(brokerAddrFound);
                     this.filterServerTable.remove(brokerAddrFound);
@@ -501,6 +503,7 @@ public class RouteInfoManager {
                     boolean removeBrokerName = false;
                     Iterator<Entry<String, BrokerData>> itBrokerAddrTable =
                         this.brokerAddrTable.entrySet().iterator();
+                    //2. 维护 brokerAddrTable
                     while (itBrokerAddrTable.hasNext() && (null == brokerNameFound)) {
                         BrokerData brokerData = itBrokerAddrTable.next().getValue();
 
@@ -525,7 +528,7 @@ public class RouteInfoManager {
                                 brokerData.getBrokerName());
                         }
                     }
-
+                    //3. 从clusterAddrTable中移除 broker
                     if (brokerNameFound != null && removeBrokerName) {
                         Iterator<Entry<String, Set<String>>> it = this.clusterAddrTable.entrySet().iterator();
                         while (it.hasNext()) {
@@ -547,7 +550,7 @@ public class RouteInfoManager {
                             }
                         }
                     }
-
+                    //4. 根据brokername 便利所有的主题队列,如果队列包含当前broker的队列,则移除
                     if (removeBrokerName) {
                         Iterator<Entry<String, List<QueueData>>> itTopicQueueTable =
                             this.topicQueueTable.entrySet().iterator();

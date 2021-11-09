@@ -84,6 +84,7 @@ public class DefaultMQProducer extends ClientConfig implements MQProducer {
      *
      * See {@linktourl http://rocketmq.apache.org/docs/core-concept/} for more discussion.
      */
+    //生产者所属的组,消息服务器在回查事务状态时,会随机选择该组中任意一个生产者发起的事务回查请求
     private String producerGroup;
 
     /**
@@ -111,7 +112,7 @@ public class DefaultMQProducer extends ClientConfig implements MQProducer {
      *
      * This may potentially cause message duplication which is up to application developers to resolve.
      */
-    private int retryTimesWhenSendFailed = 2;
+    private int retryTimesWhenSendFailed = 2;//重试2次+1次发送,一共会发送3次
 
     /**
      * Maximum number of retry to perform internally before claiming sending failure in asynchronous mode. </p>
@@ -128,7 +129,7 @@ public class DefaultMQProducer extends ClientConfig implements MQProducer {
     /**
      * Maximum allowed message size in bytes.
      */
-    private int maxMessageSize = 1024 * 1024 * 4; // 4M
+    private int maxMessageSize = 1024 * 1024 * 4; // 4M,消息最大长度:4M
 
     /**
      * Interface of asynchronous transfer data
@@ -279,6 +280,7 @@ public class DefaultMQProducer extends ClientConfig implements MQProducer {
      */
     @Override
     public void start() throws MQClientException {
+        //k1 生产者启动
         this.setProducerGroup(withNamespace(this.producerGroup));
         this.defaultMQProducerImpl.start();
         if (null != traceDispatcher) {
