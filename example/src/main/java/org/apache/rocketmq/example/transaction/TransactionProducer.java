@@ -20,7 +20,9 @@ import org.apache.rocketmq.client.exception.MQClientException;
 import org.apache.rocketmq.client.producer.SendResult;
 import org.apache.rocketmq.client.producer.TransactionListener;
 import org.apache.rocketmq.client.producer.TransactionMQProducer;
+import org.apache.rocketmq.client.producer.TransactionSendResult;
 import org.apache.rocketmq.common.message.Message;
+import org.apache.rocketmq.example.Const;
 import org.apache.rocketmq.remoting.common.RemotingHelper;
 
 import java.io.UnsupportedEncodingException;
@@ -33,7 +35,7 @@ import java.util.concurrent.TimeUnit;
 public class TransactionProducer {
     public static void main(String[] args) throws MQClientException, InterruptedException {
         TransactionListener transactionListener = new TransactionListenerImpl();
-        TransactionMQProducer producer = new TransactionMQProducer("please_rename_unique_group_name");
+        TransactionMQProducer producer = new TransactionMQProducer(Const.DEFAULT_GROUP);
         ExecutorService executorService = new ThreadPoolExecutor(2, 5, 100, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(2000), new ThreadFactory() {
             @Override
             public Thread newThread(Runnable r) {
@@ -42,18 +44,18 @@ public class TransactionProducer {
                 return thread;
             }
         });
-
+        producer.setNamesrvAddr(Const.NAME_SRV_REMOTE);
         producer.setExecutorService(executorService);
         producer.setTransactionListener(transactionListener);
         producer.start();
 
         String[] tags = new String[] {"TagA", "TagB", "TagC", "TagD", "TagE"};
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 5; i++) {
             try {
                 Message msg =
-                    new Message("TopicTest1234", tags[i % tags.length], "KEY" + i,
+                    new Message(Const.DEFAULT_TOPIC, tags[i % tags.length], "KEY" + i,
                         ("Hello RocketMQ " + i).getBytes(RemotingHelper.DEFAULT_CHARSET));
-                SendResult sendResult = producer.sendMessageInTransaction(msg, null);
+                TransactionSendResult sendResult = (TransactionSendResult)producer.sendMessageInTransaction(msg, null);
                 System.out.printf("%s%n", sendResult);
 
                 Thread.sleep(10);

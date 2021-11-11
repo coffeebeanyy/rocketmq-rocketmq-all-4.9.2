@@ -25,15 +25,16 @@ import org.apache.rocketmq.client.consumer.listener.MessageListenerOrderly;
 import org.apache.rocketmq.client.exception.MQClientException;
 import org.apache.rocketmq.common.consumer.ConsumeFromWhere;
 import org.apache.rocketmq.common.message.MessageExt;
+import org.apache.rocketmq.example.Const;
 
 public class Consumer {
 
     public static void main(String[] args) throws MQClientException {
-        DefaultMQPushConsumer consumer = new DefaultMQPushConsumer("please_rename_unique_group_name_3");
-
+        DefaultMQPushConsumer consumer = new DefaultMQPushConsumer(Const.DEFAULT_GROUP);
+        consumer.setNamesrvAddr(Const.NAME_SRV_REMOTE);
         consumer.setConsumeFromWhere(ConsumeFromWhere.CONSUME_FROM_FIRST_OFFSET);
 
-        consumer.subscribe("TopicTest", "TagA || TagC || TagD");
+        consumer.subscribe(Const.DEFAULT_TOPIC, "*");
 
         consumer.registerMessageListener(new MessageListenerOrderly() {
             AtomicLong consumeTimes = new AtomicLong(0);
@@ -41,19 +42,19 @@ public class Consumer {
             @Override
             public ConsumeOrderlyStatus consumeMessage(List<MessageExt> msgs, ConsumeOrderlyContext context) {
                 context.setAutoCommit(true);
-                System.out.printf("%s Receive New Messages: %s %n", Thread.currentThread().getName(), msgs);
-                this.consumeTimes.incrementAndGet();
-                if ((this.consumeTimes.get() % 2) == 0) {
-                    return ConsumeOrderlyStatus.SUCCESS;
-                } else if ((this.consumeTimes.get() % 3) == 0) {
-                    return ConsumeOrderlyStatus.ROLLBACK;
-                } else if ((this.consumeTimes.get() % 4) == 0) {
-                    return ConsumeOrderlyStatus.COMMIT;
-                } else if ((this.consumeTimes.get() % 5) == 0) {
-                    context.setSuspendCurrentQueueTimeMillis(3000);
-                    return ConsumeOrderlyStatus.SUSPEND_CURRENT_QUEUE_A_MOMENT;
-                }
-
+//                System.out.printf("%s Receive New Messages: %s %n", Thread.currentThread().getName(), msgs);
+//                this.consumeTimes.incrementAndGet();
+//                if ((this.consumeTimes.get() % 2) == 0) {
+//                    return ConsumeOrderlyStatus.SUCCESS;
+//                } else if ((this.consumeTimes.get() % 3) == 0) {
+//                    return ConsumeOrderlyStatus.ROLLBACK;
+//                } else if ((this.consumeTimes.get() % 4) == 0) {
+//                    return ConsumeOrderlyStatus.COMMIT;
+//                } else if ((this.consumeTimes.get() % 5) == 0) {
+//                    context.setSuspendCurrentQueueTimeMillis(3000);
+//                    return ConsumeOrderlyStatus.SUSPEND_CURRENT_QUEUE_A_MOMENT;
+//                }
+                System.out.printf("%s content: %s\n",Thread.currentThread().getName(),new String(msgs.get(0).getBody()));
                 return ConsumeOrderlyStatus.SUCCESS;
             }
         });

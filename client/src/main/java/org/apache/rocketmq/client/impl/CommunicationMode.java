@@ -19,5 +19,5 @@ package org.apache.rocketmq.client.impl;
 public enum CommunicationMode {
     SYNC,
     ASYNC,
-    ONEWAY,
+    ONEWAY,//用于心跳
 }
