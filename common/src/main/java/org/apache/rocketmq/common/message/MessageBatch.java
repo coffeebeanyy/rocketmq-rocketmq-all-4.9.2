@@ -25,6 +25,7 @@ import org.apache.rocketmq.common.MixAll;
 public class MessageBatch extends Message implements Iterable<Message> {
 
     private static final long serialVersionUID = 621335151046335557L;
+    //批量消息
     private final List<Message> messages;
 
     private MessageBatch(List<Message> messages) {

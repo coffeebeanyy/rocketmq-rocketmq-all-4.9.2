@@ -163,7 +163,7 @@ public abstract class AbstractSendMessageProcessor extends AsyncNettyRequestProc
         }
         return response;
     }
-
+    //检测消息发送是否合理
     protected RemotingCommand msgCheck(final ChannelHandlerContext ctx,
         final SendMessageRequestHeader requestHeader, final RemotingCommand response) {
         if (!PermName.isWriteable(this.brokerController.getBrokerConfig().getBrokerPermission())
@@ -173,7 +173,7 @@ public abstract class AbstractSendMessageProcessor extends AsyncNettyRequestProc
                 + "] sending message is forbidden");
             return response;
         }
-
+        //检测topic是否有写权限
         if (!TopicValidator.validateTopic(requestHeader.getTopic(), response)) {
             return response;
         }
