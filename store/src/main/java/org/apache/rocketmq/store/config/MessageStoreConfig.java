@@ -141,7 +141,7 @@ public class MessageStoreConfig {
     private boolean debugLockEnable = false;
     private boolean duplicationEnable = false;
     private boolean diskFallRecorded = true;
-    private long osPageCacheBusyTimeOutMills = 1000;
+    private long osPageCacheBusyTimeOutMills = 1000;//默认1s
     private int defaultQueryMaxNum = 32;
 
     @ImportantField

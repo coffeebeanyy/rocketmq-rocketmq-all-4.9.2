@@ -17,7 +17,9 @@
 package org.apache.rocketmq.remoting.common;
 
 public class Pair<T1, T2> {
+    //NettyRequestProcessor
     private T1 object1;
+    //ExecutorService
     private T2 object2;
 
     public Pair(T1 object1, T2 object2) {
