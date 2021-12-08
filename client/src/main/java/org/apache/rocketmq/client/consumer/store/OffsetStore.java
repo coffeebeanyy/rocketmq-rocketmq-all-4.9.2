@@ -24,7 +24,7 @@ import org.apache.rocketmq.common.message.MessageQueue;
 import org.apache.rocketmq.remoting.exception.RemotingException;
 
 /**
- * Offset store interface
+ * Offset store interface(集群: 保存在broker中,broadcast:保存在本地文件中)
  */
 public interface OffsetStore {
     /**

@@ -34,15 +34,19 @@ import org.apache.rocketmq.remoting.protocol.LanguageCode;
  */
 public class ClientConfig {
     public static final String SEND_MESSAGE_WITH_VIP_CHANNEL_PROPERTY = "com.rocketmq.sendMessageWithVIPChannel";
+    //多个地址使用 ; 分割
     private String namesrvAddr = NameServerAddressUtils.getNameServerAddresses();
+    //客户端地址,docker里面是docker地址而非宿主机地址
     private String clientIP = RemotingUtil.getLocalAddress();
     private String instanceName = System.getProperty("rocketmq.client.name", "DEFAULT");
+    //回调线程个数,
     private int clientCallbackExecutorThreads = Runtime.getRuntime().availableProcessors();
     protected String namespace;
     protected AccessChannel accessChannel = AccessChannel.LOCAL;
 
     /**
      * Pulling topic information interval from the named server
+     * 获取topic路由信息的时间间隔,默认30s
      */
     private int pollNameServerInterval = 1000 * 30;
     /**

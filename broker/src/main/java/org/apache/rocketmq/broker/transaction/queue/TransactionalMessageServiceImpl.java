@@ -147,6 +147,7 @@ public class TransactionalMessageServiceImpl implements TransactionalMessageServ
                 }
 
                 List<Long> doneOpOffset = new ArrayList<>();
+                //已经执行commit/rollback的half消息位点
                 HashMap<Long, Long> removeMap = new HashMap<>();
                 PullResult pullResult = fillOpRemoveMap(removeMap, opQueue, opOffset, halfOffset, doneOpOffset);
                 if (null == pullResult) {

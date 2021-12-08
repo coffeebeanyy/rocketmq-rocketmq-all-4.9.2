@@ -24,6 +24,7 @@ import org.apache.rocketmq.example.Const;
 import org.apache.rocketmq.remoting.common.RemotingHelper;
 
 /**
+ * 可靠性: 正常队列 --> 重试队列(%RETRY%开头,16次重试机会) --> 死信队列(%DLQ%消费者组名,不在被消费)
  * This class demonstrates how to send messages to brokers using provided {@link DefaultMQProducer}.
  */
 public class Producer {
@@ -32,8 +33,8 @@ public class Producer {
         /*
          * Instantiate with a producer group name.
          */
-        DefaultMQProducer producer = new DefaultMQProducer("please_rename_unique_group_name");
-        producer.setNamesrvAddr(Const.NAME_SRV_LOCAL);
+        DefaultMQProducer producer = new DefaultMQProducer(Const.DEFAULT_GROUP);
+        producer.setNamesrvAddr(Const.NAME_SRV_REMOTE);
         /*
          * Specify name server addresses.
          * <p/>
@@ -57,8 +58,8 @@ public class Producer {
                 /*
                  * Create a message instance, specifying topic, tag and message body.
                  */
-                Message msg = new Message("TopicTest" /* Topic */,
-                    "TagA" /* Tag */,
+                Message msg = new Message(Const.DEFAULT_TOPIC /* Topic */,
+                    "TagA" /* Tag */,"RM123123-"+i,
                     ("Hello RocketMQ " + i).getBytes(RemotingHelper.DEFAULT_CHARSET) /* Message body */
                 );
                 //18个级别, console-> cluster -> config

@@ -53,11 +53,9 @@ public class ScheduleMessageService extends ConfigManager {
     private static final long DELAY_FOR_A_WHILE = 100L;
     private static final long DELAY_FOR_A_PERIOD = 10000L;
 
-    private final ConcurrentMap<Integer /* level */, Long/* delay timeMillis */> delayLevelTable =
-        new ConcurrentHashMap<Integer, Long>(32);
-
-    private final ConcurrentMap<Integer /* level */, Long/* offset */> offsetTable =
-        new ConcurrentHashMap<Integer, Long>(32);
+    private final ConcurrentMap<Integer /* level */, Long/* delay timeMillis */> delayLevelTable = new ConcurrentHashMap<Integer, Long>(32);
+    //延迟级别和相应的消费点
+    private final ConcurrentMap<Integer /* level */, Long/* offset */> offsetTable = new ConcurrentHashMap<Integer, Long>(32);
     private final DefaultMessageStore defaultMessageStore;
     private final AtomicBoolean started = new AtomicBoolean(false);
     private Timer timer;
@@ -68,11 +66,11 @@ public class ScheduleMessageService extends ConfigManager {
         this.defaultMessageStore = defaultMessageStore;
         this.writeMessageStore = defaultMessageStore;
     }
-
+    //将queue id转化为延迟级别
     public static int queueId2DelayLevel(final int queueId) {
         return queueId + 1;
     }
-
+    //将延迟级别转化为queue id
     public static int delayLevel2QueueId(final int delayLevel) {
         return delayLevel - 1;
     }
@@ -96,7 +94,7 @@ public class ScheduleMessageService extends ConfigManager {
             stats.put(key, value);
         }
     }
-
+    //更新延迟消息的topic的消费位点
     private void updateOffset(int delayLevel, long offset) {
         this.offsetTable.put(delayLevel, offset);
     }

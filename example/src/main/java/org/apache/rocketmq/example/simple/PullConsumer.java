@@ -30,6 +30,7 @@ import org.apache.rocketmq.client.exception.MQBrokerException;
 import org.apache.rocketmq.client.exception.MQClientException;
 import org.apache.rocketmq.common.message.MessageExt;
 import org.apache.rocketmq.common.message.MessageQueue;
+import org.apache.rocketmq.example.Const;
 import org.apache.rocketmq.remoting.exception.RemotingException;
 
 @SuppressWarnings("deprecation")
@@ -37,11 +38,11 @@ public class PullConsumer {
 
     public static void main(String[] args) throws MQClientException {
 
-        DefaultMQPullConsumer consumer = new DefaultMQPullConsumer("please_rename_unique_group_name_5");
-        consumer.setNamesrvAddr("127.0.0.1:9876");
+        DefaultMQPullConsumer consumer = new DefaultMQPullConsumer(Const.DEFAULT_GROUP);
+        consumer.setNamesrvAddr(Const.NAME_SRV_REMOTE);
         Set<String> topics = new HashSet<>();
         //You would better to register topics,It will use in rebalance when starting
-        topics.add("TopicTest");
+        topics.add(Const.DEFAULT_TOPIC);
         consumer.setRegisterTopics(topics);
         consumer.start();
 
